@@ -5,81 +5,226 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Класс ListB - реализация списка без использования стандартных библиотек.
+ * @param <E> тип элементов списка
+ */
 public class ListB<E> implements List<E> {
 
 
     //Создайте аналог списка БЕЗ использования других классов СТАНДАРТНОЙ БИБЛИОТЕКИ
+
+    // Константа для начальной емкости массива
+    private static final int DEFAULT_CAPACITY = 10;
+
+    // Массив для хранения элементов
+    private Object[] elements;
+
+    // Текущий размер списка
+    private int size;
+
+    /**
+     * Конструктор по умолчанию, инициализирует массив с начальной емкостью.
+     */
+    public ListB() {
+        elements = new Object[DEFAULT_CAPACITY];
+        size = 0;
+    }
 
     /////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
     //////               Обязательные к реализации методы             ///////
     /////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Возвращает строковое представление списка.
+     * @return строка, представляющая элементы списка
+     */
     @Override
     public String toString() {
-        return "";
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < size; i++) {
+            sb.append(elements[i]);
+            if (i < size - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
+    /**
+     * Добавляет элемент в конец списка.
+     * @param e элемент для добавления
+     * @return true, если элемент успешно добавлен
+     */
     @Override
     public boolean add(E e) {
-        return false;
+        ensureCapacity();
+        elements[size++] = e;
+        return true;
     }
 
+    /**
+     * Удаляет элемент по индексу.
+     * @param index индекс элемента для удаления
+     * @return удалённый элемент
+     */
     @Override
     public E remove(int index) {
-        return null;
+        checkIndex(index);
+        E removedElement = (E) elements[index];
+        System.arraycopy(elements, index + 1, elements, index, size - index - 1);
+        elements[--size] = null;
+        return removedElement;
     }
 
+    /**
+     * Возвращает количество элементов в списке.
+     * @return размер списка
+     */
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
+    /**
+     * Добавляет элемент в список по указанному индексу.
+     * @param index индекс, по которому будет добавлен элемент
+     * @param element элемент для добавления
+     */
     @Override
     public void add(int index, E element) {
-
+        checkIndexForAdd(index);
+        ensureCapacity();
+        System.arraycopy(elements, index, elements, index + 1, size - index);
+        elements[index] = element;
+        size++;
     }
 
+    /**
+     * Удаляет первый найденный элемент, равный указанному.
+     * @param o объект для удаления
+     * @return true, если элемент был удалён
+     */
     @Override
     public boolean remove(Object o) {
+        for (int i = 0; i < size; i++) {
+            if (elements[i].equals(o)) {
+                remove(i);
+                return true;
+            }
+        }
         return false;
     }
 
+    /**
+     * Заменяет элемент по указанному индексу.
+     * @param index индекс заменяемого элемента
+     * @param element новый элемент
+     * @return старый элемент, который был заменён
+     */
     @Override
     public E set(int index, E element) {
-        return null;
+        checkIndex(index);
+        E oldElement = (E) elements[index];
+        elements[index] = element;
+        return oldElement;
     }
 
-
+    /**
+     * Проверяет, пуст ли список.
+     * @return true, если список пуст
+     */
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
-
+    /**
+     * Очищает список, удаляя все элементы.
+     */
     @Override
     public void clear() {
-
+        for (int i = 0; i < size; i++) {
+            elements[i] = null;
+        }
+        size = 0;
     }
 
+    /**
+     * Возвращает индекс первого вхождения указанного элемента.
+     * @param o объект для поиска
+     * @return индекс элемента или -1, если элемент не найден
+     */
     @Override
     public int indexOf(Object o) {
-        return 0;
+        for (int i = 0; i < size; i++) {
+            if (elements[i].equals(o)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
+    /**
+     * Возвращает элемент по указанному индексу.
+     * @param index индекс элемента
+     * @return элемент по указанному индексу
+     */
     @Override
     public E get(int index) {
-        return null;
+        checkIndex(index);
+        return (E) elements[index];
     }
 
+    /**
+     * Проверяет, содержится ли указанный элемент в списке.
+     * @param o объект для проверки
+     * @return true, если элемент содержится в списке
+     */
     @Override
     public boolean contains(Object o) {
-        return false;
+        return indexOf(o) >= 0;
     }
 
+    /**
+     * Возвращает индекс последнего вхождения указанного элемента.
+     * @param o объект для поиска
+     * @return индекс элемента или -1, если элемент не найден
+     */
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        for (int i = size - 1; i >= 0; i--) {
+            if (elements[i].equals(o)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Увеличивает емкость массива при необходимости
+    private void ensureCapacity() {
+        if (size == elements.length) {
+            Object[] newElements = new Object[elements.length * 2];
+            System.arraycopy(elements, 0, newElements, 0, elements.length);
+            elements = newElements;
+        }
+    }
+
+    // Проверяет индекс на корректность
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+    }
+
+    // Проверяет индекс для добавления
+    private void checkIndexForAdd(int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
     }
 
 
