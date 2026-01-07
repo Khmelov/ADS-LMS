@@ -13,6 +13,7 @@ package by.it.group451052.nasonova.lesson02;
 Предметы можно резать на кусочки (т.е. алгоритм будет жадным)
  */
 import java.io.File;
+import java.util.Arrays;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
@@ -36,10 +37,12 @@ public class C_GreedyKnapsack {
 
         @Override
         public int compareTo(Item o) {
-            //тут может быть ваш компаратор
+            long left = (long) this.cost * (long) o.weight;
+            long right = (long) o.cost * (long) this.weight;
 
+            if (left == right) return 0;
+            return (left > right) ? -1 : 1;
 
-            return 0;
         }
     }
 
@@ -57,18 +60,20 @@ public class C_GreedyKnapsack {
         }
         System.out.printf("Всего предметов: %d. Рюкзак вмещает %d кг.\n",n,W);
 
-        //тут необходимо реализовать решение задачи
-        //итогом является максимально воможная стоимость вещей в рюкзаке
-        //вещи можно резать на кусочки (непрерывный рюкзак)
-        double result = 0;
-        //тут реализуйте алгоритм сбора рюкзака
-        //будет особенно хорошо, если с собственной сортировкой
-        //кроме того, можете описать свой компаратор в классе Item
-        //ваше решение.
-
-
-
-
+        Arrays.sort(items);
+        double result = 0.0;
+        int remaining = W;
+        for (int i = 0; i < n && remaining > 0; i++) {
+            Item it = items[i];
+            if (it.weight <= remaining) {
+                result += it.cost;
+                remaining -= it.weight;
+            } else {
+                double part = (double) remaining / it.weight;
+                result += it.cost * part;
+                remaining = 0;
+            }
+        }
 
         System.out.printf("Удалось собрать рюкзак на сумму %f\n",result);
         return result;
