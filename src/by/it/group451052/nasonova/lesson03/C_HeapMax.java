@@ -44,20 +44,61 @@ public class C_HeapMax {
         private List<Long> heap = new ArrayList<>();
 
         int siftDown(int i) { //просеивание вверх
+            int maxIndex = i;
+            int size = heap.size();
+
+            int left = 2 * i + 1;
+            if (left < size && heap.get(left) > heap.get(maxIndex)) {
+                maxIndex = left;
+            }
+
+            int right = 2 * i + 2;
+            if (right < size && heap.get(right) > heap.get(maxIndex)) {
+                maxIndex = right;
+            }
+
+            if (i != maxIndex) {
+                Long temp = heap.get(i);
+                heap.set(i, heap.get(maxIndex));
+                heap.set(maxIndex, temp);
+
+                return siftDown(maxIndex);
+            }
 
             return i;
         }
 
         int siftUp(int i) { //просеивание вниз
-
+            if (i == 0) return i;
+            int parent = (i - 1) / 2;
+            if (heap.get(i) > heap.get(parent)) {
+                Long temp = heap.get(i);
+                heap.set(i, heap.get(parent));
+                heap.set(parent, temp);
+                return siftUp(parent);
+            }
             return i;
         }
 
         void insert(Long value) { //вставка
+            heap.add(value);
+            siftUp(heap.size() - 1);
         }
 
         Long extractMax() { //извлечение и удаление максимума
-            Long result = null;
+            if (heap.isEmpty()) return null;
+
+            Long result = heap.get(0);
+
+            int lastIndex = heap.size() - 1;
+            if (lastIndex == 0) {
+                heap.remove(0);
+                return result;
+            }
+
+            heap.set(0, heap.get(lastIndex));
+            heap.remove(lastIndex);
+            siftDown(0);
 
             return result;
         }
@@ -76,7 +117,7 @@ public class C_HeapMax {
             if (s.equalsIgnoreCase("extractMax")) {
                 Long res=heap.extractMax();
                 if (res!=null && res>maxValue) maxValue=res;
-                System.out.println();
+                System.out.println(res);
                 i++;
             }
             if (s.contains(" ")) {
