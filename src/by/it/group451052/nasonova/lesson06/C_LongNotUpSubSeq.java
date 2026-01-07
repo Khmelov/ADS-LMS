@@ -49,15 +49,43 @@ public class C_LongNotUpSubSeq {
         for (int i = 0; i < n; i++) {
             m[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи методами динамического программирования (!!!)
-        int result = 0;
+        int[] dp = new int[n];
+        int[] parent = new int[n];
 
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+            parent[i] = -1;
+        }
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        int maxLength = 1;
+        int maxEndIndex = 0;
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (m[j] >= m[i] && dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
+                    parent[i] = j;
+                }
+            }
+            if (dp[i] > maxLength) {
+                maxLength = dp[i];
+                maxEndIndex = i;
+            }
+        }
+        int[] sequenceIndices = new int[maxLength];
+        int curIndex = maxEndIndex;
+        for (int i = maxLength - 1; i >= 0; i--) {
+            sequenceIndices[i] = curIndex + 1;
+            curIndex = parent[curIndex];
+        }
+        System.out.println(maxLength);
+        for (int index : sequenceIndices) {
+            System.out.print(index + " ");
+        }
+        System.out.println();
+
+        return maxLength;
     }
-
-
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson06/dataC.txt");
