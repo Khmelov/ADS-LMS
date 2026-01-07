@@ -30,15 +30,24 @@ public class B_CountSort {
         for (int i = 0; i < n; i++) {
             points[i]=scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением сортировки подсчетом
+        int[] cnt = new int[11]; // 0..10
 
+        for (int x : points) {
+            cnt[x]++;
+        }
 
+        int idx = 0;
+        for (int value = 1; value <= 10; value++) {
+            int c = cnt[value];
+            while (c > 0) {
+                points[idx++] = value;
+                c--;
+            }
+        }
 
-
-
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return points;
     }
+
 
 
     public static void main(String[] args) throws FileNotFoundException {

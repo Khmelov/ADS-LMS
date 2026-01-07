@@ -38,14 +38,20 @@ public class C_QSortOptimized {
         int stop;
 
         Segment(int start, int stop){
-            this.start = start;
-            this.stop = stop;
+            if (start <= stop) {
+                this.start = start;
+                this.stop = stop;
+            } else {
+                this.start = stop;
+                this.stop = start;
+            }
         }
 
         @Override
         public int compareTo(Object o) {
-            //подумайте, что должен возвращать компаратор отрезков
-            return 0;
+            Segment other = (Segment) o;
+            if (this.start != other.start) return Integer.compare(this.start, other.start);
+            return Integer.compare(this.stop, other.stop);
         }
     }
 
@@ -68,17 +74,82 @@ public class C_QSortOptimized {
             segments[i]=new Segment(scanner.nextInt(),scanner.nextInt());
         }
         //читаем точки
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < m; i++) {
             points[i]=scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением быстрой сортировки
-        //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
+        int[] starts = new int[n];
+        int[] stops = new int[n];
+        for (int i = 0; i < n; i++) {
+            starts[i] = segments[i].start;
+            stops[i] = segments[i].stop;
+        }
 
+        // сортировка на месте (3-разбиение + хвостовая элиминация)
+        quickSort3(starts, 0, n - 1);
+        quickSort3(stops, 0, n - 1);
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        // ответ для каждой точки
+        for (int i = 0; i < m; i++) {
+            int p = points[i];
+            int cntStarts = upperBound(starts, p); // сколько start <= p
+            int cntStops = lowerBound(stops, p);   // сколько stop < p
+            result[i] = cntStarts - cntStops;
+        }
+
         return result;
     }
 
+    // ---------- бинарный поиск ----------
+    // первый индекс, где a[idx] > x  => количество элементов <= x
+    private int upperBound(int[] a, int x) {
+        int l = 0, r = a.length;
+        while (l < r) {
+            int mid = (l + r) >>> 1;
+            if (a[mid] <= x) l = mid + 1;
+            else r = mid;
+        }
+        return l;
+    }
+
+    // первый индекс, где a[idx] >= x => количество элементов < x
+    private int lowerBound(int[] a, int x) {
+        int l = 0, r = a.length;
+        while (l < r) {
+            int mid = (l + r) >>> 1;
+            if (a[mid] < x) l = mid + 1;
+            else r = mid;
+        }
+        return l;
+    }
+
+    // ---------- quicksort 3-way + хвостовая элиминация ----------
+    private void quickSort3(int[] a, int low, int high) {
+        while (low < high) {
+            int pivot = a[low + ((high - low) >>> 1)];
+
+            int lt = low, i = low, gt = high;
+            while (i <= gt) {
+                if (a[i] < pivot) swap(a, lt++, i++);
+                else if (a[i] > pivot) swap(a, i, gt--);
+                else i++;
+            }
+
+            // хвостовая элиминация: рекурсивно идём в меньшую часть
+            if (lt - low < high - gt) {
+                if (low < lt - 1) quickSort3(a, low, lt - 1);
+                low = gt + 1;
+            } else {
+                if (gt + 1 < high) quickSort3(a, gt + 1, high);
+                high = lt - 1;
+            }
+        }
+    }
+
+    private void swap(int[] a, int i, int j) {
+        int t = a[i];
+        a[i] = a[j];
+        a[j] = t;
+    }
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";

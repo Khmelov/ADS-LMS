@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.Arrays;
 
 /*
 Видеорегистраторы и площадь.
@@ -43,17 +44,18 @@ public class A_QSort {
         int stop;
 
         Segment(int start, int stop){
-            this.start = start;
-            this.stop = stop;
-            //тут вообще-то лучше доделать конструктор на случай если
-            //концы отрезков придут в обратном порядке
+            if (start <= stop) {
+                this.start = start;
+                this.stop = stop;
+            } else {
+                this.start = stop;
+                this.stop = start;
+            }
         }
-
         @Override
         public int compareTo(Segment o) {
-            //подумайте, что должен возвращать компаратор отрезков
-
-            return 0;
+            if (this.start != o.start) return Integer.compare(this.start, o.start);
+            return Integer.compare(this.stop, o.stop);
         }
     }
 
@@ -79,16 +81,51 @@ public class A_QSort {
         for (int i = 0; i < m; i++) {
             points[i]=scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением быстрой сортировки
-        //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
+        int[] starts = new int[n];
+        int[] stops = new int[n];
+        for (int i = 0; i < n; i++) {
+            starts[i] = segments[i].start;
+            stops[i] = segments[i].stop;
+        }
 
+        Arrays.sort(starts);
+        Arrays.sort(stops);
 
+        for (int i = 0; i < m; i++) {
+            int p = points[i];
 
+            // сколько стартов <= p
+            int leftCount = upperBound(starts, p);
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+            // сколько концов < p (потому что если stop == p, камера событие записала)
+            int rightCount = lowerBound(stops, p);
+
+            result[i] = leftCount - rightCount;
+        }
         return result;
     }
 
+    // index первого элемента > x  (т.е. количество элементов <= x)
+    private int upperBound(int[] a, int x) {
+        int l = 0, r = a.length;
+        while (l < r) {
+            int mid = (l + r) >>> 1;
+            if (a[mid] <= x) l = mid + 1;
+            else r = mid;
+        }
+        return l;
+    }
+
+    // index первого элемента >= x (т.е. количество элементов < x)
+    private int lowerBound(int[] a, int x) {
+        int l = 0, r = a.length;
+        while (l < r) {
+            int mid = (l + r) >>> 1;
+            if (a[mid] < x) l = mid + 1;
+            else r = mid;
+        }
+        return l;
+    }
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
