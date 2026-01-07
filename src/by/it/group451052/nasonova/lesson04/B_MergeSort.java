@@ -32,20 +32,39 @@ public class B_MergeSort {
         int[] a=new int[n];
         for (int i = 0; i < n; i++) {
             a[i] = scanner.nextInt();
-            System.out.println(a[i]);
         }
+        int[] tmp = new int[n];
+        mergeSort(a, tmp, 0, n - 1);
 
-        // тут ваше решение (реализуйте сортировку слиянием)
-        // https://ru.wikipedia.org/wiki/Сортировка_слиянием
-
-
-
-
-
-
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return a;
     }
+
+    private void mergeSort(int[] a, int[] tmp, int left, int right) {
+        if (left >= right) return;
+
+        int mid = left + (right - left) / 2;
+        mergeSort(a, tmp, left, mid);
+        mergeSort(a, tmp, mid + 1, right);
+        merge(a, tmp, left, mid, right);
+    }
+
+    private void merge(int[] a, int[] tmp, int left, int mid, int right) {
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+
+        while (i <= mid && j <= right) {
+            if (a[i] <= a[j]) tmp[k++] = a[i++];
+            else tmp[k++] = a[j++];
+        }
+        while (i <= mid) tmp[k++] = a[i++];
+        while (j <= right) tmp[k++] = a[j++];
+
+        for (int p = left; p <= right; p++) {
+            a[p] = tmp[p];
+        }
+    }
+
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson04/dataB.txt");
@@ -57,6 +76,4 @@ public class B_MergeSort {
             System.out.print(index+" ");
         }
     }
-
-
 }

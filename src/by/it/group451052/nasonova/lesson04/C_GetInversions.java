@@ -46,19 +46,50 @@ public class C_GetInversions {
         for (int i = 0; i < n; i++) {
             a[i] = scanner.nextInt();
         }
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!     тут ваше решение   !!!!!!!!!!!!!!!!!!!!!!!!
+        long result = mergeSortCount(a, new int[n], 0, n - 1);
 
+        return (int) result;
+    }
 
+    // сортировка + подсчёт инверсий
+    private long mergeSortCount(int[] a, int[] tmp, int left, int right) {
+        if (left >= right) return 0;
 
+        int mid = left + (right - left) / 2;
+        long inv = 0;
 
+        inv += mergeSortCount(a, tmp, left, mid);
+        inv += mergeSortCount(a, tmp, mid + 1, right);
+        inv += mergeCount(a, tmp, left, mid, right);
 
+        return inv;
+    }
 
+    // слияние двух отсортированных половин + подсчёт инверсий
+    private long mergeCount(int[] a, int[] tmp, int left, int mid, int right) {
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        long inv = 0;
 
+        while (i <= mid && j <= right) {
+            if (a[i] <= a[j]) {
+                tmp[k++] = a[i++];
+            } else {
+                tmp[k++] = a[j++];
+                inv += (mid - i + 1);
+            }
+        }
 
+        while (i <= mid) tmp[k++] = a[i++];
+        while (j <= right) tmp[k++] = a[j++];
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        for (int p = left; p <= right; p++) {
+            a[p] = tmp[p];
+        }
+
+        return inv;
+
     }
 
 
