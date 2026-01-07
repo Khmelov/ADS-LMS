@@ -25,9 +25,38 @@ public class FiboC {
         //Решение сложно найти интуитивно
         //возможно потребуется дополнительный поиск информации
         //см. период Пизано
-        return 0L;
+        int period = pisanoPeriod(m);
+        long nMod = n % period;
+        return fibonacciModulo(nMod, m);
     }
+private int pisanoPeriod(int m) {
+        int prev  = 0;
+        int curr = 1;
 
+        for (int i = 0; i < 6 * m; i++) {
+            int next = (prev + curr) % m;
+            prev = curr;
+            curr = next;
 
+            if (prev == 0 && curr == 1) {
+                return i + 1;
+            }
+        }
+        return 6 * m;
+}
+private long fibonacciModulo(long n, int m) {
+        if (n == 0) return 0L;
+        if (n == 1) return 1L;
+
+        int prev = 0;
+        int curr = 1;
+
+        for (long i = 2; i <= n; i++) {
+            int next = (prev + curr) % m;
+            prev = curr;
+            curr = next;
+        }
+        return curr;
+}
 }
 
