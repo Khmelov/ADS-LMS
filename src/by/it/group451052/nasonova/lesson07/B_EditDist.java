@@ -41,16 +41,33 @@ public class B_EditDist {
 
 
     int getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int n = one.length();
+        int m = two.length();
 
+        int[][] dp = new int[n + 1][m + 1];
 
+        // базовые случаи
+        for (int i = 0; i <= n; i++) dp[i][0] = i;
+        for (int j = 0; j <= m; j++) dp[0][j] = j;
 
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        // итерационное ДП
+        for (int i = 1; i <= n; i++) {
+            char c1 = one.charAt(i - 1);
+            for (int j = 1; j <= m; j++) {
+                char c2 = two.charAt(j - 1);
+
+                int cost = (c1 == c2) ? 0 : 1;
+
+                int insert = dp[i][j - 1] + 1;
+                int delete = dp[i - 1][j] + 1;
+                int replace = dp[i - 1][j - 1] + cost;
+
+                dp[i][j] = Math.min(insert, Math.min(delete, replace));
+            }
+        }
+
+        return dp[n][m];
     }
-
-
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";

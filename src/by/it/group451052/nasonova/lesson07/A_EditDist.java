@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.Arrays;
 
 /*
 Задача на программирование: расстояние Левенштейна
@@ -39,17 +40,43 @@ import java.util.Scanner;
 
 public class A_EditDist {
 
-
     int getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int n = one.length();
+        int m = two.length();
 
+        int[][] dp = new int[n + 1][m + 1];
 
-        int result = 0;
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                dp[i][j] = -1;
+            }
+        }
+
+        return solve(one, two, n, m, dp);
     }
 
+    private int solve(String one, String two, int i, int j, int[][] dp) {
+        if (i == 0) return j;
+        if (j == 0) return i;
 
+        if (dp[i][j] != -1) {
+            return dp[i][j];
+        }
+
+        int cost;
+        if (one.charAt(i - 1) == two.charAt(j - 1)) {
+            cost = 0;
+        } else {
+            cost = 1;
+        }
+
+        int insert = solve(one, two, i, j - 1, dp) + 1;
+        int delete = solve(one, two, i - 1, j, dp) + 1;
+        int replace = solve(one, two, i - 1, j - 1, dp) + cost;
+
+        dp[i][j] = Math.min(insert, Math.min(delete, replace));
+        return dp[i][j];
+    }
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson07/dataABC.txt");

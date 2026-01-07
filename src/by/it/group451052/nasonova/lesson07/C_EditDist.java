@@ -50,14 +50,83 @@ import java.util.Scanner;
 public class C_EditDist {
 
     String getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int n = one.length();
+        int m = two.length();
+        int[][] dp = new int[n + 1][m + 1];
+        char[][] parent = new char[n + 1][m + 1];
 
+        dp[0][0] = 0;
+        parent[0][0] = 'S';
 
-        String result = "";
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        for (int i = 1; i <= n; i++) {
+            dp[i][0] = i;
+            parent[i][0] = 'D';
+        }
+        for (int j = 1; j <= m; j++) {
+            dp[0][j] = j;
+            parent[0][j] = 'I';
+        }
+
+        for (int i = 1; i <= n; i++) {
+            char c1 = one.charAt(i - 1);
+            for (int j = 1; j <= m; j++) {
+                char c2 = two.charAt(j - 1);
+
+                int cost = (c1 == c2) ? 0 : 1;
+
+                int del = dp[i - 1][j] + 1;
+                int ins = dp[i][j - 1] + 1;
+                int rep = dp[i - 1][j - 1] + cost;
+
+                int best = rep;
+                char op = (cost == 0) ? 'M' : 'R';
+
+                if (del < best) {
+                    best = del;
+                    op = 'D';
+                }
+                if (ins < best) {
+                    best = ins;
+                    op = 'I';
+                }
+
+                dp[i][j] = best;
+                parent[i][j] = op;
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int i = n, j = m;
+
+        while (i > 0 || j > 0) {
+            char op = parent[i][j];
+
+            if (op == 'M') {
+                sb.append("#,");
+                i--;
+                j--;
+            } else if (op == 'R') {
+                sb.append("~").append(two.charAt(j - 1)).append(",");
+                i--;
+                j--;
+            } else if (op == 'D') {
+                sb.append("-").append(one.charAt(i - 1)).append(",");
+                i--;
+            } else {
+                sb.append("+").append(two.charAt(j - 1)).append(",");
+                j--;
+            }
+        }
+        String[] tokens = sb.toString().split(",");
+        StringBuilder result = new StringBuilder();
+        for (int t = tokens.length - 1; t >= 0; t--) {
+            if (!tokens[t].isEmpty()) {
+                result.append(tokens[t]).append(",");
+            }
+        }
+
+        return result.toString();
     }
-
 
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
