@@ -1,4 +1,4 @@
-package by.it.a_khmelev.lesson02;
+package by.it.group451051.naumchik.lesson02;
 /*
 Даны
 1) объем рюкзака 4
@@ -15,6 +15,7 @@ package by.it.a_khmelev.lesson02;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class C_GreedyKnapsack {
@@ -49,7 +50,23 @@ public class C_GreedyKnapsack {
         //кроме того, можете описать свой компаратор в классе Item
 
         //ваше решение.
+        Arrays.sort(items);
 
+        int remainingWeight = W;
+
+        for (Item item : items) {
+            if (remainingWeight <= 0) break;
+            // Если предмет можно взять целиком
+            if (item.weight <= remainingWeight) {
+                result += item.cost;
+                remainingWeight -= item.weight;
+            } else {
+                // Берём дробную часть предмета
+                double fraction = (double) remainingWeight / item.weight;
+                result += item.cost * fraction;
+                remainingWeight = 0;
+            }
+        }
 
         System.out.printf("Удалось собрать рюкзак на сумму %f\n", result);
         return result;
@@ -75,9 +92,10 @@ public class C_GreedyKnapsack {
         @Override
         public int compareTo(Item o) {
             //тут может быть ваш компаратор
-
-
-            return 0;
+            double densityThis = (double) this.cost / this.weight;
+            double densityOther = (double) o.cost / o.weight;
+            // Обратный порядок: чем больше плотность, тем раньше
+            return Double.compare(densityOther, densityThis);
         }
     }
 }

@@ -1,8 +1,10 @@
-package by.it.a_khmelev.lesson07;
+package by.it.group451051.naumchik.lesson07;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 /*
@@ -51,11 +53,68 @@ public class C_EditDist {
 
     String getDistanceEdinting(String one, String two) {
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int n = one.length();
+        int m = two.length();
+        int[][] dp = new int[n + 1][m + 1];
 
+        // Инициализация
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = i; // удаление
+        }
+        for (int j = 0; j <= m; j++) {
+            dp[0][j] = j; // вставка
+        }
 
-        String result = "";
+        // Заполнение таблицы
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.min(dp[i - 1][j] + 1,           // удаление
+                            Math.min(dp[i][j - 1] + 1,           // вставка
+                                    dp[i - 1][j - 1] + 1));    // замена
+                }
+            }
+        }
+
+        // Восстановление пути (в обратном порядке)
+        List<String> operations = new ArrayList<>();
+        int i = n, j = m;
+        while (i > 0 || j > 0) {
+            if (i > 0 && j > 0 && one.charAt(i - 1) == two.charAt(j - 1)
+                    && dp[i][j] == dp[i - 1][j - 1]) {
+                // Копирование (совпадение)
+                operations.add("#");
+                i--; j--;
+            } else if (i > 0 && dp[i][j] == dp[i - 1][j] + 1) {
+                // Удаление символа one[i-1]
+                operations.add("-" + one.charAt(i - 1));
+                i--;
+            } else if (j > 0 && dp[i][j] == dp[i][j - 1] + 1) {
+                // Вставка символа two[j-1]
+                operations.add("+" + two.charAt(j - 1));
+                j--;
+            } else if (i > 0 && j > 0 && dp[i][j] == dp[i - 1][j - 1] + 1) {
+                // Замена символа one[i-1] на two[j-1]
+                operations.add("~" + two.charAt(j - 1));
+                i--; j--;
+            } else {
+                // Теоретически сюда не должны попасть
+                break;
+            }
+        }
+
+        // Операции были собраны в обратном порядке, разворачиваем
+        Collections.reverse(operations);
+
+        // Формируем строку с запятыми после каждой операции
+        StringBuilder result = new StringBuilder();
+        for (String op : operations) {
+            result.append(op).append(",");
+        }
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        return result.toString();
     }
 
 

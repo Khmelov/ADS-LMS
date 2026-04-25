@@ -1,4 +1,4 @@
-package by.it.a_khmelev.lesson04;
+package by.it.group451051.naumchik.lesson04;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -56,9 +56,62 @@ public class C_GetInversions {
         }
         int result = 0;
         //!!!!!!!!!!!!!!!!!!!!!!!!     тут ваше решение   !!!!!!!!!!!!!!!!!!!!!!!!
-
-
+        // Вспомогательный массив для слияния (нужен, чтобы не создавать его на каждом шаге рекурсии)
+        int[] temp = new int[n];
+        // Запускаем рекурсивную сортировку слиянием, которая попутно считает инверсии
+        result = mergeSortAndCount(a, temp, 0, n - 1);
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
+
+    // Рекурсивно сортирует отрезок массива arr[left..right] и возвращает количество инверсий внутри этого отрезка.
+    private int mergeSortAndCount(int[] arr, int[] temp, int left, int right) {
+        int invCount = 0;
+        if (left < right) {
+            int mid = left + (right - left) / 2;   // находим середину, чтобы избежать переполнения
+            // Считаем инверсии в левой половине
+            invCount += mergeSortAndCount(arr, temp, left, mid);
+            // Считаем инверсии в правой половине
+            invCount += mergeSortAndCount(arr, temp, mid + 1, right);
+            // Считаем инверсии, где один элемент из левой половины, другой из правой
+            invCount += mergeAndCount(arr, temp, left, mid, right);
+        }
+        return invCount;
+    }
+
+    // * Сливает две упорядоченные части arr[left..mid] и arr[mid+1..right] в один упорядоченный отрезок.
+    private int mergeAndCount(int[] arr, int[] temp, int left, int mid, int right) {
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        int invCount = 0;
+
+        // Сливаем две половины, одновременно подсчитывая инверсии
+        while (i <= mid && j <= right) {
+            if (arr[i] <= arr[j]) {
+                // Элемент левой части не больше правого — инверсии нет
+                temp[k++] = arr[i++];
+            } else {
+                temp[k++] = arr[j++];
+                invCount += (mid - i + 1);
+            }
+        }
+
+        // Копируем остатки левой части (если остались)
+        while (i <= mid) {
+            temp[k++] = arr[i++];
+        }
+
+        // Копируем остатки правой части (если остались)
+        while (j <= right) {
+            temp[k++] = arr[j++];
+        }
+
+        // Копируем отсортированный отрезок обратно в исходный массив
+        for (i = left; i <= right; i++) {
+            arr[i] = temp[i];
+        }
+        return invCount;
+    }
+
 }

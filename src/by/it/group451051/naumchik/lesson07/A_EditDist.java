@@ -1,4 +1,4 @@
-package by.it.a_khmelev.lesson07;
+package by.it.group451051.naumchik.lesson07;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -41,9 +41,40 @@ public class A_EditDist {
 
     int getDistanceEdinting(String one, String two) {
         //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+        int n = one.length();
+        int m = two.length();
 
+        // Создаём таблицу dp размером (n+1) x (m+1)
+        int[][] dp = new int[n + 1][m + 1];
 
-        int result = 0;
+        // Инициализация: преобразование пустой строки в строку длины j требует j вставок
+        for (int j = 0; j <= m; j++) {
+            dp[0][j] = j;
+        }
+        // Преобразование строки длины i в пустую требует i удалений
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = i;
+        }
+
+        // Заполнение таблицы
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                    // Символы совпадают, операция не нужна
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    // Выбираем минимальную стоимость среди:
+                    // удаление (dp[i-1][j] + 1),
+                    // вставка (dp[i][j-1] + 1),
+                    // замена (dp[i-1][j-1] + 1)
+                    dp[i][j] = Math.min(dp[i - 1][j] + 1,       // удаление
+                            Math.min(dp[i][j - 1] + 1,       // вставка
+                                    dp[i - 1][j - 1] + 1)); // замена
+                }
+            }
+        }
+
+        int result = dp[n][m];
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }

@@ -1,8 +1,5 @@
-package by.it.a_khmelev.lesson08;
+package by.it.group451051.naumchik.lesson08;
 
-import by.it.a_khmelev.lesson07.A_EditDist;
-
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -47,9 +44,32 @@ public class A_Knapsack {
         for (int i = 0; i < n; i++) {
             gold[i]=scanner.nextInt();
         }
+        scanner.close();
 
+        // dp[i] == true => можно набрать вес i, используя любые слитки (каждый много раз)
+        boolean[] dp = new boolean[w + 1];
+        dp[0] = true;   // вес 0 всегда достижим (ничего не кладём)
 
+        // Основной цикл: перебираем все достижимые веса и пытаемся добавить каждый слиток
+        // Идём от меньшего веса к большему, потому что предметы можно использовать повторно
+        for (int i = 0; i <= w; i++) {
+            if (dp[i]) {                      // если текущий вес i достижим
+                for (int g : gold) {          // пробуем добавить слиток веса g
+                    if (i + g <= w) {         // не превышаем вместимость
+                        dp[i + g] = true;    // помечаем новый вес как достижимый
+                    }
+                }
+            }
+        }
+
+        // Ищем максимальный достижимый вес (идём от w вниз)
         int result = 0;
+        for (int i = w; i >= 0; i--) {
+            if (dp[i]) {
+                result = i;
+                break;
+            }
+        }
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }

@@ -1,6 +1,7 @@
-package by.it.a_khmelev.lesson02;
+package by.it.group451051.naumchik.lesson02;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 /*
 Даны интервальные события events
@@ -29,11 +30,27 @@ public class B_Sheduler {
         //в период [from, int] (включительно).
         //оптимизация проводится по наибольшему числу непересекающихся событий.
         //Начало и конец событий могут совпадать.
-        List<Event> result;
-        result = new ArrayList<>();
-        //ваше решение.
+        // Отфильтровываем события, полностью лежащие внутри [from, to]
+        List<Event> validEvents = new ArrayList<>();
+        for (Event e : events) {
+            if (e.start >= from && e.stop <= to) {
+                validEvents.add(e);
+            }
+        }
 
+        // Сортируем по времени окончания (stop), а при равенстве — по началу
+        validEvents.sort(Comparator.comparingInt((Event e) -> e.stop)
+                .thenComparingInt(e -> e.start));
 
+        List<Event> result = new ArrayList<>();
+        int lastEnd = from; // время, когда аудитория освободилась
+
+        for (Event e : validEvents) {
+            if (e.start >= lastEnd) {
+                result.add(e);
+                lastEnd = e.stop;
+            }
+        }
         return result;          //вернем итог
     }
 

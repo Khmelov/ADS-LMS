@@ -1,10 +1,11 @@
-package by.it.a_khmelev.lesson03;
+package by.it.group451051.naumchik.lesson03;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 
 // Lesson 3. C_Heap.
 // Задача: построить max-кучу = пирамиду = бинарное сбалансированное дерево на массиве.
@@ -74,22 +75,63 @@ public class C_HeapMax {
         //Будет мало? Ну тогда можете его собрать как Generic и/или использовать в варианте B
         private List<Long> heap = new ArrayList<>();
 
-        int siftDown(int i) { //просеивание вверх
+        private int parent(int i) {
+            return (i - 1) / 2;
+        }
 
+        private int left(int i) {
+            return 2 * i + 1;
+        }
+
+        private int right(int i) {
+            return 2 * i + 2;
+        }
+
+        int siftDown(int i) { //просеивание вверх  (подъем элемента)
+            while (i > 0) {
+                int p = parent(i);
+                if (heap.get(p) >= heap.get(i)) break;
+                swap(p, i);
+                i = p;
+            }
             return i;
         }
 
         int siftUp(int i) { //просеивание вниз
+            int size = heap.size();
+            while (true) {
+                int largest = i;
+                int l = left(i);
+                int r = right(i);
+                if (l < size && heap.get(l) > heap.get(largest)) largest = l;
+                if (r < size && heap.get(r) > heap.get(largest)) largest = r;
+                if (largest == i) break;
+                swap(i, largest);
+                i = largest;
+            }
 
             return i;
         }
 
+        private void swap(int i, int j) {
+            Long tmp = heap.get(i);
+            heap.set(i, heap.get(j));
+            heap.set(j, tmp);
+        }
+
         void insert(Long value) { //вставка
+            heap.add(value);
+            siftDown(heap.size() - 1); // поднимаем последний элемент вверх
         }
 
         Long extractMax() { //извлечение и удаление максимума
-            Long result = null;
-
+            if (heap.isEmpty()) return null;
+            Long result = heap.get(0);
+            Long last = heap.remove(heap.size() - 1);
+            if (!heap.isEmpty()) {
+                heap.set(0, last);
+                siftUp(0); // опускаем корень вниз
+            }
             return result;
         }
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! КОНЕЦ ЗАДАЧИ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1

@@ -1,6 +1,5 @@
-package by.it.a_khmelev.lesson08;
+package by.it.group451051.naumchik.lesson08;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -38,10 +37,17 @@ public class B_Knapsack {
             gold[i]=scanner.nextInt();
         }
 
+        // массив DP: dp[j] – максимальный вес, который можно набрать при вместимости j
+        int[] dp = new int[w + 1];
 
-        int result = 0;
+        for (int weight : gold) {
+            // идём справа налево, чтобы каждый слиток использовался не более одного раза
+            for (int j = w; j >= weight; j--) {
+                dp[j] = Math.max(dp[j], dp[j - weight] + weight);
+            }
+        }
         //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        return result;
+        return dp[w];
     }
 
 
