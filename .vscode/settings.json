@@ -1,0 +1,18 @@
+{
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:\\Program Files\\Java\\jdk-21",
+            "default": true
+        }
+    ],
+    "java.saveActions.compile": true,
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.referencedLibraries": [
+        "c:\\БГУИР ДИСТАНЦИОНКА\\2 курс\\2 сем\\АиСД\\ADS-LMS\\junit-4.13.2.jar",
+        "c:\\БГУИР ДИСТАНЦИОНКА\\2 курс\\2 сем\\АиСД\\ADS-LMS\\init.jar",
+        "c:\\БГУИР ДИСТАНЦИОНКА\\2 курс\\2 сем\\АиСД\\ADS-LMS\\hamcrest-core-1.3.jar"
+    ]
+}
