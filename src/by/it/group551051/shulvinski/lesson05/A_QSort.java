@@ -137,6 +137,8 @@ public class A_QSort {
     }
 
     private int partition(int[] arr, int low, int high) {
+        swap(arr, low + (high - low) / 2, high); // берется средний элемент в качестве опорного
+
         int pivot = arr[high];
         int i = low - 1;
 
@@ -159,6 +161,7 @@ public class A_QSort {
 
     // обычный quick sort для кастомного объекта
     Segment[] quickSortSegments(Segment[] arr,int low,int high){
+
         if (low < high){
 
             int pivot_index = partitionSegments(arr,low,high); // опорный элемент
@@ -170,6 +173,7 @@ public class A_QSort {
     }
 
     private int partitionSegments(Segment[] arr, int low, int high) {
+        swapSegments(arr, low + (high - low) / 2, high); // берется средний элемент в качестве опорного
         Segment pivot = arr[high];
         int i = low - 1; // граница уже отработанной части где все элементы меньше опорного
 
