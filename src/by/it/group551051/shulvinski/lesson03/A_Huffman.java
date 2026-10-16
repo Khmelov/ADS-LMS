@@ -61,7 +61,7 @@ public class A_Huffman {
         //прочитаем строку для кодирования из тестового файла
         Scanner scanner = new Scanner(inputStream);
         String s = scanner.next();
-
+        codes.clear();
         //все комментарии от тестового решения были оставлены т.к. это задание A.
         //если они вам мешают их можно удалить
 
@@ -99,8 +99,16 @@ public class A_Huffman {
         //это будет последний и единственный элемент оставшийся в очереди priorityQueue.
         StringBuilder sb = new StringBuilder();
         //.....
+        // для одной буквы "0"
+        String initialCode;
+        if (count.size() == 1) {
+            initialCode = "0";
+        } else {
+            initialCode = "";
+        }
+
         Node root = priorityQueue.poll();
-        root.fillCodes("");
+        root.fillCodes(initialCode);
 
         for (char c: s.toCharArray()){
             sb.append(codes.get(c));
