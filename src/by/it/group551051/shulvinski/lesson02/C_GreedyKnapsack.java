@@ -63,7 +63,9 @@ public class C_GreedyKnapsack {
                 result += i.cost;
                 remain -= i.weight;
             }else{
-                result += (double) i.weight * remain / i.weight; // если предмет не влезает целиком то отрезается нужный кусок
+                result += (double) i.cost * remain / i.weight; // если предмет не влезает целиком то отрезается нужный кусок
+                remain = 0; // рюкзак заполнен
+                break;
             }
         }
         System.out.printf("Удалось собрать рюкзак на сумму %f\n", result);
